@@ -7,19 +7,20 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Azure SQL Database Configuration
 const dbConfig = {
-    user: process.env.AZURE_SQL_USER,
-    password: process.env.AZURE_SQL_PASSWORD,
-    server: process.env.AZURE_SQL_SERVER,
-    database: process.env.AZURE_SQL_DATABASE,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    server: process.env.DB_SERVER,  
+    port: parseInt(process.env.DB_PORT),
+    database: process.env.DB_DATABASE,
     options: {
-        encrypt: true, // Required for Azure
-        enableArithAbort: true
+        encrypt: true,  
+        trustServerCertificate: true, 
+        enableArithAbort: true,
     }
 };
 
-// Connect to Azure SQL
+
 let pool;
 async function connectToDatabase() {
     try {
@@ -33,5 +34,5 @@ async function connectToDatabase() {
 
 connectToDatabase();
 // Start the Server
-const PORT = process.env.PORT || 4000;
+const PORT = 10298 || 4000;
 app.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT} :D`));
