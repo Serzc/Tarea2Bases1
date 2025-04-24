@@ -1,20 +1,19 @@
-
 CREATE TABLE Puesto (
     id INT PRIMARY KEY IDENTITY(1,1),
-    Nombre NVARCHAR(100) NOT NULL,
+    Nombre VARCHAR(64) NOT NULL,
     SalarioxHora DECIMAL(10, 2) NOT NULL
 );
 
 
 CREATE TABLE Empleado (
-    id INT PRIMARY KEY IDENTITY(1,1),
+    id INT PRIMARY KEY,
     idPuesto INT NOT NULL,
     IdSupervisor INT NULL,
-    ValorDocIdentidad NVARCHAR(20) NOT NULL UNIQUE,
-    Nombre NVARCHAR(100) NOT NULL,
+    ValorDocumentoIdentidad VARCHAR(16) NOT NULL UNIQUE,
+    Nombre VARCHAR(64) NOT NULL,
     FechaContratacion DATE NOT NULL,
-    SaldoVacaciones DECIMAL(10, 2) NOT NULL DEFAULT 0,
-    email NVARCHAR(100) NULL,
+    SaldoVacaciones INT NOT NULL DEFAULT 0,
+    email VARCHAR(32) NULL,
     EsActivo BIT NOT NULL DEFAULT 1,
     CONSTRAINT FK_Empleado_Puesto FOREIGN KEY (idPuesto) REFERENCES Puesto(id),
     CONSTRAINT FK_Empleado_Supervisor FOREIGN KEY (IdSupervisor) REFERENCES Empleado(id)
@@ -27,10 +26,14 @@ CREATE TABLE Supervisor (
 );
 
 
+CREATE TABLE TipoEvento (
+    id INT PRIMARY KEY,
+    Nombre VARCHAR(64) NOT NULL,
+);
 CREATE TABLE TipoMovimiento (
     id INT PRIMARY KEY IDENTITY(1,1),
-    Nombre NVARCHAR(50) NOT NULL,
-    Accion CHAR(1) NOT NULL CHECK (Accion IN ('C', 'D')) -- C: Crédito, D: Débito
+    Nombre VARCHAR(64) NOT NULL,
+    TipoAccion VARCHAR(16) NOT NULL CHECK (TipoAccion IN ('Credito', 'Debito')) 
 );
 
 
@@ -50,15 +53,14 @@ CREATE TABLE SolicitudVacacion (
 
 CREATE TABLE Movimiento (
     id INT PRIMARY KEY IDENTITY(1,1),
-    IdEmpleado INT NOT NULL,
-    idTipoMovimiento INT NOT NULL,
-    Fecha DATETIME NOT NULL DEFAULT GETDATE(),
-    Monto DECIMAL(10, 2) NOT NULL,
-    VisibleFlag BIT NOT NULL DEFAULT 1,
-    PostTime DATETIME NOT NULL DEFAULT GETDATE(),
-    IdPostUser INT NOT NULL,
-    PostIP NVARCHAR(50) NOT NULL,
-    CONSTRAINT FK_Movimiento_Empleado FOREIGN KEY (IdEmpleado) REFERENCES Empleado(id),
+	ValorDocId INT NOT NULL,
+	idTipoMovimiento INT NOT NULL,
+	Fecha DATE NOT NULL DEFAULT GETDATE(),
+	Monto DECIMAL(10, 2) NOT NULL,
+	PostByUser VARCHAR(64) NOT NULL,
+	PostInIP VARCHAR(64) NOT NULL,
+	PostTime DATETIME NOT NULL DEFAULT GETDATE(),
+    
     CONSTRAINT FK_Movimiento_Tipo FOREIGN KEY (idTipoMovimiento) REFERENCES TipoMovimiento(id)
 );
 
@@ -78,3 +80,18 @@ CREATE TABLE Email (
     CONSTRAINT FK_Email_Movimiento FOREIGN KEY (idMovimiento) REFERENCES Movimiento(id)
 );
 
+CREATE TABLE Error (
+	Codigo INT PRIMARY KEY,
+	Descripcion VARCHAR(128)
+);
+CREATE TABLE Usuario (
+	id INT PRIMARY KEY,
+	Nombre VARCHAR(32) NOT NULL,
+	Pass   VARCHAR(16) NOT NULL,
+);
+
+CREATE TABLE Feriado (
+	id INT PRIMARY KEY IDENTITY(1,1),
+	Fecha DATE NOT NULL,
+	Descripcion VARCHAR(128)
+);
