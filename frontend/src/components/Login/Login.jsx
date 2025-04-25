@@ -25,7 +25,8 @@ export default function Login() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="login-form"
+     onSubmit={handleSubmit}>
       <input
         type="text"
         placeholder="Usuario"
@@ -33,6 +34,7 @@ export default function Login() {
         onChange={(e) => setUsername(e.target.value)}
       />
       <input
+        
         type="password"
         placeholder="Contraseña"
         value={password}

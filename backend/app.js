@@ -24,6 +24,7 @@ poolConnect.then(() => {
 
 // Rutas
 app.use('/api/empleados', empleadoRoutes);
+app.use('/api/login', empleadoRoutes);
 
 
 // Ruta de prueba

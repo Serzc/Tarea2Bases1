@@ -30,6 +30,19 @@ CREATE TABLE TipoEvento (
     id INT PRIMARY KEY,
     Nombre VARCHAR(64) NOT NULL,
 );
+
+CREATE TABLE BitacoraEvento (
+    id INT PRIMARY KEY,
+    idTipoEvento INT NOT NULL,
+    idPostByUser INT NOT NULL,
+    Descripcion VARCHAR(128),
+    PostInIP VARCHAR(64) NOT NULL,
+	PostTime DATETIME NOT NULL DEFAULT GETDATE(),
+
+    CONSTRAINT FK_Bitacora_TipoEvento FOREIGN KEY (idTipoEvento) REFERENCES TipoEvento(id),
+    CONSTRAINT FK_Bitacora_Usuario FOREIGN KEY (idPostByUser) REFERENCES Usuario(id),
+);
+
 CREATE TABLE TipoMovimiento (
     id INT PRIMARY KEY IDENTITY(1,1),
     Nombre VARCHAR(64) NOT NULL,
@@ -53,15 +66,18 @@ CREATE TABLE SolicitudVacacion (
 
 CREATE TABLE Movimiento (
     id INT PRIMARY KEY IDENTITY(1,1),
-	ValorDocId INT NOT NULL,
+	idEmpleado INT NOT NULL,
 	idTipoMovimiento INT NOT NULL,
 	Fecha DATE NOT NULL DEFAULT GETDATE(),
 	Monto DECIMAL(10, 2) NOT NULL,
-	PostByUser VARCHAR(64) NOT NULL,
+    NuevoSaldo DECIMAL(10, 2) NOT NULL,
+	idPostByUser INT NOT NULL,
 	PostInIP VARCHAR(64) NOT NULL,
 	PostTime DATETIME NOT NULL DEFAULT GETDATE(),
     
-    CONSTRAINT FK_Movimiento_Tipo FOREIGN KEY (idTipoMovimiento) REFERENCES TipoMovimiento(id)
+    CONSTRAINT FK_Movimiento_Tipo FOREIGN KEY (idTipoMovimiento) REFERENCES TipoMovimiento(id),
+    CONSTRAINT FK_Movimiento_Empleado FOREIGN KEY (idEmpleado) REFERENCES Empleado(id),
+    CONSTRAINT FK_Movimiento_Usuario FOREIGN KEY (idPostByUser) REFERENCES Usuario(id),
 );
 
 
@@ -84,6 +100,19 @@ CREATE TABLE Error (
 	Codigo INT PRIMARY KEY,
 	Descripcion VARCHAR(128)
 );
+
+CREATE TABLE DBError (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    UserName VARCHAR(32) NOT NULL,
+    ErrorNumber INT NOT NULL,
+    ErrorState VARCHAR(16) NOT NULL,
+    Severity VARCHAR(16) NOT NULL,
+    ErrorLine INT NOT NULL,
+    OriginProcedure VARCHAR(16) NOT NULL,
+    ErrorMessage VARCHAR (128),
+    ErrorDatetime DATETIME NOT NULL DEFAULT GETDATE(),
+);
+
 CREATE TABLE Usuario (
 	id INT PRIMARY KEY,
 	Nombre VARCHAR(32) NOT NULL,
