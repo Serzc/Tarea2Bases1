@@ -5,7 +5,8 @@ const cors = require('cors');
 const { pool, poolConnect } = require('./dbConfig.js'); // Conexión a SQL Server
 
 // Importar rutas
-const empleadoRoutes = require('./routes.js');
+const {employeeRouter, loginRouter} = require('./routes.js');
+
 
 
 const app = express();
@@ -23,7 +24,9 @@ poolConnect.then(() => {
 });
 
 // Rutas
-app.use('/api/empleados', empleadoRoutes);
+app.use('/api/empleados', employeeRouter);
+app.use('/api/login', loginRouter);
+
 
 
 

@@ -1,9 +1,13 @@
 const express = require('express');
-const empleadoController = require('./controllers.js');
+const {empleadoController,loginController} = require('./controllers.js');
 
-const router = express.Router();
+const employeeRouter = express.Router();
+const loginRouter = express.Router();
 
-router.get('/', empleadoController.listarEmpleados);
-router.post('/', empleadoController.crearEmpleado);
+employeeRouter.get('/', empleadoController.listarEmpleados);
+employeeRouter.post('/', empleadoController.crearEmpleado);
 
-module.exports = router;
+loginRouter.post('/', loginController.login);
+loginRouter.get('/check-lockout', loginController.checkLockout);
+
+module.exports = {employeeRouter, loginRouter};

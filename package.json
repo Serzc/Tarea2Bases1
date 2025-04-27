@@ -9,5 +9,8 @@
     },
     "devDependencies": {
         "concurrently": "^8.2.2"
+    },
+    "dependencies": {
+        "start": "^5.1.0"
     }
 }
