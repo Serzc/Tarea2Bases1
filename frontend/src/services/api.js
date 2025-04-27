@@ -9,3 +9,5 @@ export const login = (username, password) =>
 
 export const getEmployees = (filter) => 
   api.get('/empleados', { params: { filtro: filter } });
+export const updateEmployee = (id, updates) => 
+  api.put(`/empleados/${id}`, updates);

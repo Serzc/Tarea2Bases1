@@ -31,7 +31,41 @@ const empleadoController = {
         } catch (err) {
             res.status(500).json({ error: err.message });
         }
-    }
+    },
+    actualizarEmpleado: async (req, res) => {
+        try {
+          const { id } = req.params;
+          const { NuevoNombre, NuevoDocumento, NuevoIdPuesto } = req.body;
+          console.log('Datos recibidos:', { id, NuevoNombre, NuevoDocumento, NuevoIdPuesto }); // Debug
+      
+          const request = pool.request()
+            .input('idEmpleado', sql.Int, id)
+            .input('NuevoNombre', sql.VarChar(64), NuevoNombre || null)
+            .input('NuevoDocumento', sql.VarChar(16), NuevoDocumento || null)
+            .input('NuevoIdPuesto', sql.Int, NuevoIdPuesto || null)
+            .input('idPostByUser', sql.Int, 1) // Usuario temporal (ajusta según autenticación)
+            .input('PostInIP', sql.VarChar(64), req.ip || '127.0.0.1')
+            .output('CodigoError', sql.Int);
+      
+          console.log('Ejecutando SP...'); // Debug
+          const result = await request.execute('sp_ActualizarEmpleado');
+          console.log('Resultado SP:', result); // Debug
+      
+          if (result.output.CodigoError !== 0) {
+            return res.status(400).json({ 
+              CodigoError: result.output.CodigoError,
+              message: 'Error en validación' 
+            });
+          }
+          res.json({ success: true });
+        } catch (err) {
+          console.error('Error en controlador:', err); // Debug
+          res.status(500).json({ 
+            error: 'Error interno',
+            details: err.message 
+          });
+        }
+      }
 };
 
 /* const loginController = {
