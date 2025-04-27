@@ -67,24 +67,32 @@ const loginController = {
         try {
             const { user, pwd } = req.body;
             const clientIp = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+            
+            const connection = await pool.connect(); 
+            
+            // Check if the IP is currently locked out
+            const checkLockoutRequest = new sql.Request(connection);
+            checkLockoutRequest.input('ip', sql.VarChar(64), clientIp);
+            const lockoutResult = await checkLockoutRequest.execute('sp_CheckLockoutStatus');
 
-            // Check recent failed attempts by IP
-            const checkAttemptsRequest = new sql.Request(await pool.connect());
-            checkAttemptsRequest.input('ip', sql.VarChar(64), clientIp);
-            const attemptsResult = await checkAttemptsRequest.execute('sp_GetFailedLoginAttempts');
+            if (lockoutResult.recordset.length > 0) {
+                const lockoutTime = lockoutResult.recordset[0].PostTime;
+                const minutesSinceLockout = (new Date() - lockoutTime) / (1000 * 60);
 
-            const failedAttempts = attemptsResult.recordset.length;
-            const maxAttempts = 5;
-            const lockoutMinutes = 10;
-
-            if (failedAttempts >= maxAttempts) {
-                return res.status(403).json({
-                    mensaje: `Demasiados intentos fallidos. Espere ${lockoutMinutes} minutos.`,
-                    isLockedOut: true,
-                    attemptsLeft: 0
-                });
+                if (minutesSinceLockout < 10) {
+                    // Still locked out
+                    return res.status(403).json({
+                        mensaje: `Demasiados intentos fallidos. Espere ${10 - Math.floor(minutesSinceLockout)} minutos.`,
+                        isLockedOut: true,
+                        attemptsLeft: 0
+                    });
+                } else {
+                    // 🔥 Lockout expired → Clear failed attempts!
+                    const clearAttemptsRequest = new sql.Request(connection);
+                    clearAttemptsRequest.input('ip', sql.VarChar(64), clientIp);
+                    await clearAttemptsRequest.execute('sp_ClearFailedLoginAttempts');
+                }
             }
-
             // Try login with user + pwd
             const request = new sql.Request(await pool.connect());
             request.input('user', sql.VarChar(32), user);
