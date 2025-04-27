@@ -8,4 +8,4 @@ export const login = (username, password) =>
   api.post('/login', { username, password });
 
 export const getEmployees = (filter) => 
-  api.get(`/employees?filter=${filter}`);
+  api.get('/empleados', { params: { filtro: filter } });

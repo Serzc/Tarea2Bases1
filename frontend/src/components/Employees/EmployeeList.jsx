@@ -1,13 +1,56 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './Employees.css';
+import React, { useState, useEffect } from 'react';
+import { getEmployees } from '../../services/api'; 
 
-export default function Employees() {
-  const navigate = useNavigate();
+const ListaEmpleados = () => {
+  const [empleados, setEmpleados] = useState([]);
+  const [filtro, setFiltro] = useState('');
+
+  const cargarEmpleados = async () => {
+    try {
+      const response = await getEmployees(filtro);
+      console.log(response.data);  
+      setEmpleados(response.data);
+    } catch (error) {
+      console.error('Error cargando empleados:', error);
+      alert(error.response?.data?.mensaje || 'Error al cargar empleados');
+    }
+  };
+
+  useEffect(() => {
+    cargarEmpleados();
+  }, [filtro]);
 
   return (
-    <table >
+    <div>
+      <input
+        type="text"
+        value={filtro}
+        onChange={(e) => setFiltro(e.target.value)}
+        placeholder="Filtrar por nombre o documento"
+      />
       
-    </table>
+      <table>
+        <thead>
+          <tr>
+            <th>Documento</th>
+            <th>Nombre</th>
+            <th>Puesto</th>
+            <th>Saldo Vacaciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {empleados.map(empleado => (
+            <tr key={empleado.id}>
+              <td>{empleado.ValorDocumentoIdentidad}</td>
+              <td>{empleado.Nombre}</td>
+              <td>{empleado.Puesto}</td>
+              <td>{empleado.SaldoVacaciones} días</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
-}
+};
+
+export default ListaEmpleados;

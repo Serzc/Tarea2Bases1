@@ -32,14 +32,8 @@ app.get('/', (req, res) => {
     res.send('API de Control de Vacaciones');
 });
 
-// Manejo centralizado de errores
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ 
-        codigoError: err.code || 500,
-        mensaje: err.message || 'Error interno del servidor' 
-    });
-});
+
+
 
 // Iniciar servidor
 app.listen(PORT, () => {
