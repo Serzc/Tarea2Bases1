@@ -25,3 +25,9 @@ export const createEmployee = (employeeData) =>
   api.post('/empleados', employeeData);
 export const deleteEmployee = (id) => 
   api.delete(`/empleados/${id}`);
+export const getMovimientos = (idEmpleado) => 
+  api.get(`/empleados/${idEmpleado}/movimientos`);
+export const insertMovimiento = (idEmpleado, movimiento) =>
+  api.post(`/empleados/${idEmpleado}/movimientos`, movimiento);
+
+
