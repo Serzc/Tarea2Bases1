@@ -27,13 +27,16 @@ const empleadoController = {
         if (!idPuesto || !ValorDocumentoIdentidad || !Nombre || !FechaContratacion) {
         return res.status(400).json({ message: "Todos los campos son requeridos" });
         }
-      
+        const idPostByUser = req.headers['x-user-id'];
+            if (!idPostByUser) {
+              return res.status(400).json({ message: "Usuario no autenticado" });
+            }
         const result = await pool.request()
         .input('idPuesto', sql.Int, idPuesto)
         .input('ValorDocumentoIdentidad', sql.VarChar(16), ValorDocumentoIdentidad)
         .input('Nombre', sql.VarChar(64), Nombre)
         .input('FechaContratacion', sql.Date, FechaContratacion)
-        .input('idPostByUser', sql.Int, 7)
+        .input('idPostByUser', sql.Int, idPostByUser)
         .input('PostInIP', sql.VarChar(64), req.ip || '127.0.0.1')
         .output('CodigoError', sql.Int)
         .execute('sp_CrearEmpleado');
@@ -56,14 +59,18 @@ const empleadoController = {
         try {
           const { id } = req.params;
           const { NuevoNombre, NuevoDocumento, NuevoIdPuesto } = req.body;
+          const idPostByUser = req.headers['x-user-id'];
+            if (!idPostByUser) {
+              return res.status(400).json({ message: "Usuario no autenticado" });
+            }
           console.log('Datos recibidos:', { id, NuevoNombre, NuevoDocumento, NuevoIdPuesto }); // Debug
-      
+          
           const request = pool.request()
             .input('idEmpleado', sql.Int, id)
             .input('NuevoNombre', sql.VarChar(64), NuevoNombre || null)
             .input('NuevoDocumento', sql.VarChar(16), NuevoDocumento || null)
             .input('NuevoIdPuesto', sql.Int, NuevoIdPuesto || null)
-            .input('idPostByUser', sql.Int, 1) // Usuario temporal (ajusta según autenticación)
+            .input('idPostByUser', sql.Int, idPostByUser)
             .input('PostInIP', sql.VarChar(64), req.ip || '127.0.0.1')
             .output('CodigoError', sql.Int);
       
@@ -89,9 +96,13 @@ const empleadoController = {
       eliminarEmpleado : async (req, res) => {
         try {
           const { id } = req.params;
+          const idPostByUser = req.headers['x-user-id'];
+            if (!idPostByUser) {
+              return res.status(400).json({ message: "Usuario no autenticado" });
+            }
           const result = await pool.request()
             .input('idEmpleado', sql.Int, id)
-            .input('idPostByUser', sql.Int, 1) // Ajustar según autenticación
+            .input('idPostByUser', sql.Int, idPostByUser) // Ajustar según autenticación
             .input('PostInIP', sql.VarChar(64), req.ip || '127.0.0.1')
             .output('CodigoError', sql.Int)
             .execute('sp_EliminarEmpleado');
@@ -136,8 +147,10 @@ const empleadoController = {
             const { idTipoMovimiento, Monto } = req.body;
             const clientIp = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
             
-            const idPostByUser = 7; // Placeholder (set your logged user ID here)
-    
+            const idPostByUser = req.headers['x-user-id'];
+            if (!idPostByUser) {
+              return res.status(400).json({ message: "Usuario no autenticado" });
+            }
             const request = new sql.Request(await pool.connect());
             request.input('idEmpleado', sql.Int, idEmpleado);
             request.input('idTipoMovimiento', sql.Int, idTipoMovimiento);

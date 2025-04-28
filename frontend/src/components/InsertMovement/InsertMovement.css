@@ -1,0 +1,127 @@
+/* Variables de color */
+:root {
+    --primary-color: #4CAF50;
+    --primary-hover: #45a049;
+    --error-color: #f44336;
+    --text-color: #333;
+    --border-color: #ddd;
+    --background-color: #f9f9f9;
+  }
+  
+  /* Contenedor principal */
+  .movement-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Encabezado */
+  .movement-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .movement-header h2 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+  }
+  
+  .employee-info {
+    display: flex;
+    gap: 1.5rem;
+  }
+  
+  .employee-info p {
+    margin: 0;
+    color: var(--text-color);
+  }
+  
+  /* Mensaje de error */
+  .error-message {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    background-color: #ffebee;
+    color: var(--error-color);
+    border-radius: 4px;
+    border-left: 4px solid var(--error-color);
+  }
+  
+  /* Formulario */
+  .movement-form {
+    background: var(--background-color);
+    padding: 1.5rem;
+    border-radius: 6px;
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-color);
+  }
+  
+  .form-select,
+  .form-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  
+  .form-select:focus,
+  .form-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+  }
+  
+  /* Botón */
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .submit-button {
+    padding: 0.75rem 1.5rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .submit-button:hover {
+    background-color: var(--primary-hover);
+  }
+  
+  /* Estado de carga */
+  .loading-container {
+    text-align: center;
+    padding: 2rem;
+    font-size: 1.2rem;
+    color: var(--text-color);
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .movement-container {
+      padding: 1rem;
+      margin: 1rem;
+    }
+    
+    .employee-info {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }

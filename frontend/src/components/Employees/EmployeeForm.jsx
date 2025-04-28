@@ -1,6 +1,7 @@
 // EmployeeForm.jsx
 import React, { useState } from 'react';
 import { createEmployee } from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
 
 const EmployeeForm = ({ onEmployeeCreated }) => {
   const [formData, setFormData] = useState({
@@ -9,9 +10,11 @@ const EmployeeForm = ({ onEmployeeCreated }) => {
     Nombre: '',
     FechaContratacion: ''
   });
+  const { user } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    formData.idPostByUser = user.id; // Agregar el id del usuario que crea el empleado
     console.log('Datos a enviar:', formData);
     try {
       await createEmployee(formData);

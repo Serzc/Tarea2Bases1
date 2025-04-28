@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../../services/api';
-//import { useAuth } from '../../contexts/AuthContext.jsx';
+import { login as apiLogin } from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
 import './Login.css';
 
 export default function Login() {
@@ -10,9 +10,9 @@ export default function Login() {
   const [error, setError] = useState('');
   const [lockedOut, setLockedOut] = useState(false);
   const navigate = useNavigate();
-  //const { login } = useAuth();
+  const { login: authLogin } = useAuth(); // Función de login del contexto
 
-  // Check if IP is locked out on mount
+  // Verificar bloqueo al montar el componente
   useEffect(() => {
     const checkLockout = async () => {
       try {
@@ -31,18 +31,38 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Sending login request:', username, password);
+    setError('');
+    
     try {
-      const response = await login(username, password);
-      console.log("RESPUESTA: ",response.data);
-      setError('¡Éxito!');
-      navigate('/employees');
+      // 1. Llamar al endpoint de login
+      const response = await apiLogin(username, password);
+      
+      // 2. Verificar si la respuesta contiene los datos del usuario
+      if (response.data && response.data.usuario) {
+        const userData = response.data.usuario;
+        
+        // 3. Guardar el usuario en el contexto y localStorage
+        authLogin({
+          id: userData.id,
+          username: userData.nombre,
+          // ...otros datos del usuario si los necesitas
+        });
+        
+        // 4. Redirigir al dashboard
+        navigate('/employees');
+      } else {
+        setError('Respuesta inesperada del servidor');
+      }
     } catch (err) {
-      if (err.response && err.response.status === 401) {
-        setError(err.response.data.mensaje || 'Usuario o contraseña incorrectos');
-      } else if (err.response && err.response.status === 403) {
-        setError(err.response.data.mensaje);
-        setLockedOut(true); // Lockout triggered
+      if (err.response) {
+        if (err.response.status === 401) {
+          setError(err.response.data.mensaje || 'Usuario o contraseña incorrectos');
+        } else if (err.response.status === 403) {
+          setError(err.response.data.mensaje);
+          setLockedOut(true);
+        } else {
+          setError('Error en el servidor');
+        }
       } else {
         setError('Error de conexión');
       }
@@ -59,6 +79,7 @@ export default function Login() {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           disabled={lockedOut}
+          required
         />
         <input
           type="password"
@@ -66,9 +87,12 @@ export default function Login() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           disabled={lockedOut}
+          required
         />
         {error && <p className="error">{error}</p>}
-        <button type="submit" disabled={lockedOut}>Ingresar</button>
+        <button type="submit" disabled={lockedOut}>
+          Ingresar
+        </button>
       </form>
     </div>
   );

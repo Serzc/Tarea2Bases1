@@ -3,6 +3,7 @@ import { getEmployees, updateEmployee, deleteEmployee } from '../../services/api
 import EmployeeForm from './EmployeeForm';
 import './EmployeeList.css'
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 
 
 const ListaEmpleados = () => {
@@ -16,9 +17,10 @@ const ListaEmpleados = () => {
     valorDocumentoIdentidad: '',
     idPuesto: ''
   });
+  const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Cargar empleados (sin cambios)
+  // ___________________________________________
   const cargarEmpleados = async () => {
     try {
       const response = await getEmployees(filtro);
@@ -28,13 +30,13 @@ const ListaEmpleados = () => {
     }
   };
 
-  // Manejar cambios en el formulario (sin cambios)
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Seleccionar empleado para editar (sin cambios)
+  // --- Función para manejar el clic en editar ---
   const handleEditClick = (empleado) => {
     setFormData({
       id: empleado.id,
@@ -49,6 +51,7 @@ const ListaEmpleados = () => {
   const handleUpdateEmployee = async () => {
     try {
       const updates = {};
+      updates.idPostByUser = user.id; 
       if (formData.nombre !== selectedEmployee.Nombre) updates.NuevoNombre = formData.nombre;
       if (formData.valorDocumentoIdentidad !== selectedEmployee.ValorDocumentoIdentidad) 
         updates.NuevoDocumento = formData.valorDocumentoIdentidad;
@@ -75,7 +78,7 @@ const ListaEmpleados = () => {
       return; // Cancelar si el usuario no confirma
     }
     try {
-      await deleteEmployee(id);
+      await deleteEmployee(id,{ idPostByUser: user.id });
       alert('Empleado eliminado correctamente');
       cargarEmpleados(); // Refrescar la lista
     } catch (error) {
