@@ -11,3 +11,9 @@ export const getEmployees = (filter) =>
   api.get('/empleados', { params: { filtro: filter } });
 export const updateEmployee = (id, updates) => 
   api.put(`/empleados/${id}`, updates);
+export const getMovimientos = (idEmpleado) => 
+  api.get(`/empleados/${idEmpleado}/movimientos`);
+export const insertMovimiento = (idEmpleado, movimiento) =>
+  api.post(`/empleados/${idEmpleado}/movimientos`, movimiento);
+
+

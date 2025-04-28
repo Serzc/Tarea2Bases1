@@ -43,11 +43,6 @@ CREATE TABLE BitacoraEvento (
     CONSTRAINT FK_Bitacora_Usuario FOREIGN KEY (idPostByUser) REFERENCES Usuario(id),
 );
 
-CREATE TABLE TipoMovimiento (
-    id INT PRIMARY KEY IDENTITY(1,1),
-    Nombre VARCHAR(64) NOT NULL,
-    TipoAccion VARCHAR(16) NOT NULL CHECK (TipoAccion IN ('Credito', 'Debito')) 
-);
 
 
 CREATE TABLE SolicitudVacacion (
@@ -61,6 +56,12 @@ CREATE TABLE SolicitudVacacion (
     Estado TINYINT NOT NULL DEFAULT 0 CHECK (Estado IN (0, 1, 2)), -- 0:Pendiente, 1:Aprobado, 2:Rechazado
     CONSTRAINT FK_Solicitud_Empleado FOREIGN KEY (idEmpleado) REFERENCES Empleado(id),
     CONSTRAINT FK_Solicitud_Supervisor FOREIGN KEY (IdSupervisorAprueba) REFERENCES Supervisor(idEmpleado)
+);
+
+CREATE TABLE TipoMovimiento (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    Nombre VARCHAR(64) NOT NULL,
+    TipoAccion VARCHAR(16) NOT NULL CHECK (TipoAccion IN ('Credito', 'Debito')) 
 );
 
 

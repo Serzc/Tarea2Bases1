@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import { getEmployees, updateEmployee } from '../../services/api'; // Cambiado a updateEmployee
 
 const ListaEmpleados = () => {
@@ -11,6 +13,7 @@ const ListaEmpleados = () => {
     valorDocumentoIdentidad: '',
     idPuesto: ''
   });
+  const navigate = useNavigate();
 
   // Cargar empleados (sin cambios)
   const cargarEmpleados = async () => {
@@ -51,7 +54,7 @@ const ListaEmpleados = () => {
   
       console.log('Enviando actualización:', updates); // Debug
       const response = await updateEmployee(formData.id, updates);
-      console.log('Respuesta del servidor:', response.data); // Debug
+      console.log('Respuesta del servidor:', response.data); // DebugF
   
       alert("¡Actualizado correctamente!");
       cargarEmpleados();
@@ -98,8 +101,9 @@ const ListaEmpleados = () => {
               <td>{empleado.Puesto}</td>
               <td>
                 <button onClick={() => handleEditClick(empleado)}>Editar</button>
+                <button onClick={() => navigate(`/employees/${empleado.id}/movimientos`)}> Movimientos </button>
               </td>
-            </tr>
+              </tr>
           ))}
         </tbody>
       </table>

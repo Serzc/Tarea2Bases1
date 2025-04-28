@@ -65,7 +65,25 @@ const empleadoController = {
             details: err.message 
           });
         }
-      }
+      },
+      listarMovimientosEmpleado: async (req, res) => {
+        try {
+            const { idEmpleado } = req.params;
+    
+            const request = new sql.Request(await pool.connect());
+            request.input('idEmpleado', sql.Int, idEmpleado);
+    
+            const result = await request.execute('sp_ListarMovimientosEmpleado');
+    
+            const empleado = result.recordsets[0][0];
+            const movimientos = result.recordsets[1];
+    
+            res.json({ empleado, movimientos });
+        } catch (err) {
+            console.error('Error listarMovimientosEmpleado:', err);
+            res.status(500).json({ mensaje: err.message });
+        }
+    }
 };
 
 
