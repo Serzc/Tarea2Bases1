@@ -149,7 +149,7 @@ const ListaEmpleados = () => {
                   onClick={() => handleDeleteEmployee(empleado.id)}>
                   Eliminar
                 </button>
-                <button onClick={() => navigate(`/employees/${empleado.id}/movimientos`)}> Movimientos</button>
+                <button onClick={() => navigate(`/employees/${empleado.ValorDocumentoIdentidad}/movimientos`)}> Movimientos</button>
             </td>
             </tr>
           ))}

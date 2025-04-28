@@ -102,7 +102,7 @@ const empleadoController = {
             }
           const result = await pool.request()
             .input('idEmpleado', sql.Int, id)
-            .input('idPostByUser', sql.Int, idPostByUser) // Ajustar según autenticación
+            .input('idPostByUser', sql.Int, idPostByUser) 
             .input('PostInIP', sql.VarChar(64), req.ip || '127.0.0.1')
             .output('CodigoError', sql.Int)
             .execute('sp_EliminarEmpleado');
@@ -126,7 +126,7 @@ const empleadoController = {
             const { idEmpleado } = req.params;
     
             const request = new sql.Request(await pool.connect());
-            request.input('idEmpleado', sql.Int, idEmpleado);
+            request.input('ValorDoc', sql.VarChar(16), idEmpleado);
     
             const result = await request.execute('sp_ListarMovimientosEmpleado');
     
@@ -151,8 +151,9 @@ const empleadoController = {
             if (!idPostByUser) {
               return res.status(400).json({ message: "Usuario no autenticado" });
             }
+            console.log('Datos recibidos insertar mov:', { idEmpleado, idTipoMovimiento, Monto, clientIp });
             const request = new sql.Request(await pool.connect());
-            request.input('idEmpleado', sql.Int, idEmpleado);
+            request.input('ValorDocId', sql.VarChar(16), idEmpleado);
             request.input('idTipoMovimiento', sql.Int, idTipoMovimiento);
             request.input('Monto', sql.Decimal(10,2), Monto);
             request.input('idPostByUser', sql.Int, idPostByUser);
@@ -163,7 +164,7 @@ const empleadoController = {
     
             const resultado = request.parameters.Resultado.value;
             console.log(request.parameters.Resultado);
-            if (resultado === 0) {
+            if (resultado === 0 || resultado === null) {
                 res.status(201).json({ mensaje: 'Movimiento insertado exitosamente' });
             } else if (resultado === 50010) {
                 res.status(400).json({ mensaje: 'Saldo insuficiente para aplicar el movimiento' });
