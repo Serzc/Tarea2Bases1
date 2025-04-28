@@ -18,20 +18,40 @@ const empleadoController = {
         }
     },
 
-    crearEmpleado: async (req, res) => {
-        try {
-            const { idPuesto, ValorDocumentoIdentidad, Nombre, FechaContratacion } = req.body;
-            const result = await executeProcedure('sp_crear_empleado', [
-                { name: 'idPuesto', type: sql.Int, value: idPuesto },
-                { name: 'ValorDocumentoIdentidad', type: sql.VarChar(16), value: ValorDocumentoIdentidad },
-                { name: 'Nombre', type: sql.VarChar(64), value: Nombre },
-                { name: 'FechaContratacion', type: sql.Date, value: FechaContratacion }
-            ]);
-            res.status(201).json(result);
-        } catch (err) {
-            res.status(500).json({ error: err.message });
+    crearEmpleado : async (req, res) => {
+        console.log('Datos recibidos en backend:', req.body); 
+    try {
+        const { idPuesto, ValorDocumentoIdentidad, Nombre, FechaContratacion } = req.body;
+        
+        // Validar campos obligatorios
+        if (!idPuesto || !ValorDocumentoIdentidad || !Nombre || !FechaContratacion) {
+        return res.status(400).json({ message: "Todos los campos son requeridos" });
         }
-    },
+      
+        const result = await pool.request()
+        .input('idPuesto', sql.Int, idPuesto)
+        .input('ValorDocumentoIdentidad', sql.VarChar(16), ValorDocumentoIdentidad)
+        .input('Nombre', sql.VarChar(64), Nombre)
+        .input('FechaContratacion', sql.Date, FechaContratacion)
+        .input('idPostByUser', sql.Int, 7)
+        .input('PostInIP', sql.VarChar(64), req.ip || '127.0.0.1')
+        .output('CodigoError', sql.Int)
+        .execute('sp_CrearEmpleado');
+
+       
+
+    if (result.output.CodigoError !== 0) {
+      return res.status(400).json({ 
+        CodigoError: result.output.CodigoError,
+        message: "Error en validación (SP)" 
+      });
+    }
+    res.status(201).json({ success: true });
+  } catch (err) {
+    console.error('Error en backend:', err);
+    res.status(500).json({ error: err.message });
+  }
+},
     actualizarEmpleado: async (req, res) => {
         try {
           const { id } = req.params;
@@ -64,6 +84,30 @@ const empleadoController = {
             error: 'Error interno',
             details: err.message 
           });
+        }
+      },
+      eliminarEmpleado : async (req, res) => {
+        try {
+          const { id } = req.params;
+          const result = await pool.request()
+            .input('idEmpleado', sql.Int, id)
+            .input('idPostByUser', sql.Int, 1) // Ajustar según autenticación
+            .input('PostInIP', sql.VarChar(64), req.ip || '127.0.0.1')
+            .output('CodigoError', sql.Int)
+            .execute('sp_EliminarEmpleado');
+            
+          if (result.output.CodigoError !== 0) {
+            const errorMessages = {
+              50013: 'Empleado no encontrado o ya eliminado'
+            };
+            return res.status(400).json({ 
+              CodigoError: result.output.CodigoError,
+              message: errorMessages[result.output.CodigoError] || 'Error al eliminar' 
+            });
+          }
+          res.json({ success: true });
+        } catch (err) {
+          res.status(500).json({ error: err.message });
         }
       }
 };

@@ -1,0 +1,188 @@
+/* Variables de color */
+:root {
+  --primary-color: #4CAF50; /* Verde principal */
+  --primary-hover: #45a049;
+  --edit-color: #2196F3;
+  --edit-hover: #0b7dda;
+  --delete-color: #f44336;
+  --delete-hover: #da190b;
+  --background-color: #ffffff;
+  --text-color: #333333;
+  --border-color: #e0e0e0;
+  --modal-overlay: rgba(0, 0, 0, 0.5);
+}
+
+/* Estilos generales */
+.employee-container {
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text-color);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.employee-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+/* Tabla */
+.employee-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.employee-table th, .employee-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.employee-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+.actions-header {
+  width: 200px;
+}
+
+.actions-cell {
+  display: flex;
+  gap: 8px;
+}
+
+/* Botones */
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn-edit {
+  background-color: var(--edit-color);
+  color: white;
+}
+
+.btn-edit:hover {
+  background-color: var(--edit-hover);
+}
+
+.btn-delete {
+  background-color: var(--delete-color);
+  color: white;
+}
+
+.btn-delete:hover {
+  background-color: var(--delete-hover);
+}
+
+.btn-save {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-save:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn-cancel {
+  background-color: #f1f1f1;
+  color: var(--text-color);
+}
+
+.btn-cancel:hover {
+  background-color: #e0e0e0;
+}
+
+/* Formulario de filtro */
+.filter-input {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  flex-grow: 1;
+  max-width: 300px;
+}
+
+/* Modal de edición */
+.edit-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--modal-overlay);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: var(--background-color);
+  padding: 25px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .employee-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .filter-input {
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  .actions-cell {
+    flex-direction: column;
+  }
+}

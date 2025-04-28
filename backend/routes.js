@@ -7,6 +7,7 @@ const loginRouter = express.Router();
 employeeRouter.get('/', empleadoController.listarEmpleados);
 employeeRouter.post('/', empleadoController.crearEmpleado);
 employeeRouter.put('/:id', empleadoController.actualizarEmpleado);
+employeeRouter.delete('/:id', empleadoController.eliminarEmpleado);
 
 loginRouter.post('/', loginController.login);
 loginRouter.get('/check-lockout', loginController.checkLockout);

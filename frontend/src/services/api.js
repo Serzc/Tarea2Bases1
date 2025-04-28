@@ -11,3 +11,7 @@ export const getEmployees = (filter) =>
   api.get('/empleados', { params: { filtro: filter } });
 export const updateEmployee = (id, updates) => 
   api.put(`/empleados/${id}`, updates);
+export const createEmployee = (employeeData) => 
+  api.post('/empleados', employeeData);
+export const deleteEmployee = (id) => 
+  api.delete(`/empleados/${id}`);

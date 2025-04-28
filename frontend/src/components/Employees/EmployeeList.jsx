@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { getEmployees, updateEmployee } from '../../services/api'; // Cambiado a updateEmployee
+import { getEmployees, updateEmployee, deleteEmployee } from '../../services/api'; 
+import EmployeeForm from './EmployeeForm';
+import './EmployeeList.css'
 
 const ListaEmpleados = () => {
   const [empleados, setEmpleados] = useState([]);
   const [filtro, setFiltro] = useState('');
   const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     id: '',
     nombre: '',
@@ -64,6 +67,22 @@ const ListaEmpleados = () => {
       alert(`Error: ${message}`);
     }
   };
+  const handleDeleteEmployee = async (id) => {
+    if (!window.confirm('¿Estás seguro de eliminar este empleado?')) {
+      return; // Cancelar si el usuario no confirma
+    }
+    try {
+      await deleteEmployee(id);
+      alert('Empleado eliminado correctamente');
+      cargarEmpleados(); // Refrescar la lista
+    } catch (error) {
+      const errorMessages = {
+        50013: 'El empleado no existe o ya fue eliminado',
+        50008: 'Error interno al eliminar'
+      };
+      alert(errorMessages[error.response?.data?.CodigoError] || 'Error desconocido');
+    }
+  };
 
   // Cargar empleados al inicio y al filtrar (sin cambios)
   useEffect(() => {
@@ -71,23 +90,40 @@ const ListaEmpleados = () => {
   }, [filtro]);
 
   return (
-    <div>
-      {/* Filtro (sin cambios) */}
-      <input
-        type="text"
-        value={filtro}
-        onChange={(e) => setFiltro(e.target.value)}
-        placeholder="Filtrar por nombre o documento"
-      />
+    <div className="employee-container">
+      <div className="employee-header">
+        <button 
+          className="btn btn-primary"
+          onClick={() => setShowForm(true)}>
+          Agregar Nuevo Empleado
+        </button>
 
-      {/* Tabla de empleados (sin cambios) */}
-      <table>
+        <input
+          type="text"
+          className="filter-input"
+          value={filtro}
+          onChange={(e) => setFiltro(e.target.value)}
+          placeholder="Filtrar por nombre o documento"
+        />
+      </div>
+      
+      {showForm && (
+        <EmployeeForm 
+          onSuccess={() => {
+            setShowForm(false); 
+            cargarEmpleados(); 
+          }}
+          onCancel={() => setShowForm(false)}
+        />
+      )}
+      
+      <table className="employee-table">
         <thead>
           <tr>
             <th>Documento</th>
             <th>Nombre</th>
             <th>Puesto</th>
-            <th>Acciones</th>
+            <th className="actions-header">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -96,44 +132,53 @@ const ListaEmpleados = () => {
               <td>{empleado.ValorDocumentoIdentidad}</td>
               <td>{empleado.Nombre}</td>
               <td>{empleado.Puesto}</td>
-              <td>
-                <button onClick={() => handleEditClick(empleado)}>Editar</button>
+              <td className="actions-cell">
+                <button 
+                  className="btn btn-edit"
+                  onClick={() => handleEditClick(empleado)}>
+                  Editar
+                </button>
+                <button 
+                  className="btn btn-delete"
+                  onClick={() => handleDeleteEmployee(empleado.id)}>
+                  Eliminar
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      {/* Formulario de edición (simplificado) */}
       {selectedEmployee && (
-        <div className="edit-form">
-          <h3>Editar Empleado</h3>
-          <div>
-            <label>Nombre:</label>
-            <input
-              type="text"
-              name="nombre"
-              value={formData.nombre}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div>
-            <label>Documento:</label>
-            <input
-              type="text"
-              name="valorDocumentoIdentidad"
-              value={formData.valorDocumentoIdentidad}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div>
-            <label>Puesto:</label>
-            <select
-              name="idPuesto"
-              value={formData.idPuesto}
-              onChange={handleInputChange}
-            >
-                  <option value="" disabled>Seleccionar Puesto</option>
+        <div className="edit-modal">
+          <div className="modal-content">
+            <h3>Editar Empleado</h3>
+            <div className="form-group">
+              <label>Nombre:</label>
+              <input
+                type="text"
+                name="nombre"
+                value={formData.nombre}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>Documento:</label>
+              <input
+                type="text"
+                name="valorDocumentoIdentidad"
+                value={formData.valorDocumentoIdentidad}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>Puesto:</label>
+              <select
+                name="idPuesto"
+                value={formData.idPuesto}
+                onChange={handleInputChange}
+              >
+                <option value="" disabled>Seleccionar Puesto</option>
                 <option value="1">Cajero</option>
                 <option value="2">Camarero</option>
                 <option value="3">Cuidador</option>
@@ -144,10 +189,17 @@ const ListaEmpleados = () => {
                 <option value="8">Niñera</option>
                 <option value="9">Conserje</option>
                 <option value="10">Albañil</option>
-            </select>
+              </select>
+            </div>
+            <div className="modal-actions">
+              <button className="btn btn-save" onClick={handleUpdateEmployee}>
+                Guardar Cambios
+              </button>
+              <button className="btn btn-cancel" onClick={() => setSelectedEmployee(null)}>
+                Cancelar
+              </button>
+            </div>
           </div>
-          <button onClick={handleUpdateEmployee}>Guardar Cambios</button>
-          <button onClick={() => setSelectedEmployee(null)}>Cancelar</button>
         </div>
       )}
     </div>
