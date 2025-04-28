@@ -83,7 +83,42 @@ const empleadoController = {
             console.error('Error listarMovimientosEmpleado:', err);
             res.status(500).json({ mensaje: err.message });
         }
+    },
+    insertarMovimientoEmpleado: async (req, res) => {
+        console.log("Llegue aquí");
+        try {
+            const { idEmpleado } = req.params;
+            console.log(req.params);
+            const { idTipoMovimiento, Monto } = req.body;
+            const clientIp = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+            
+            const idPostByUser = 7; // Placeholder (set your logged user ID here)
+    
+            const request = new sql.Request(await pool.connect());
+            request.input('idEmpleado', sql.Int, idEmpleado);
+            request.input('idTipoMovimiento', sql.Int, idTipoMovimiento);
+            request.input('Monto', sql.Decimal(10,2), Monto);
+            request.input('idPostByUser', sql.Int, idPostByUser);
+            request.input('PostInIP', sql.VarChar(64), clientIp);
+            request.output('Resultado', sql.Int);
+    
+            await request.execute('sp_InsertarMovimientoEmpleado');
+    
+            const resultado = request.parameters.Resultado.value;
+            console.log(request.parameters.Resultado);
+            if (resultado === 0) {
+                res.status(201).json({ mensaje: 'Movimiento insertado exitosamente' });
+            } else if (resultado === 50010) {
+                res.status(400).json({ mensaje: 'Saldo insuficiente para aplicar el movimiento' });
+            } else {
+                res.status(500).json({ mensaje: 'Error desconocido', codigo: resultado });
+            }
+        } catch (err) {
+            console.error('Error insertarMovimientoEmpleado:', err);
+            res.status(500).json({ mensaje: err.message });
+        }
     }
+    
 };
 
 

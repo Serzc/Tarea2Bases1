@@ -101,9 +101,9 @@ const ListaEmpleados = () => {
               <td>{empleado.Puesto}</td>
               <td>
                 <button onClick={() => handleEditClick(empleado)}>Editar</button>
-                <button onClick={() => navigate(`/employees/${empleado.id}/movimientos`)}> Movimientos </button>
-              </td>
-              </tr>
+                <button onClick={() => navigate(`/employees/${empleado.id}/movimientos`)}> Movimientos</button>
+            </td>
+            </tr>
           ))}
         </tbody>
       </table>

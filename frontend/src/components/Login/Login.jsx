@@ -24,6 +24,7 @@ export default function Login() {
         console.error('Error checking lockout status');
       }
     };
+    checkLockout();
   }, []);
 
   const handleSubmit = async (e) => {
