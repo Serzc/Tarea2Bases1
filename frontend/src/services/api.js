@@ -1,8 +1,18 @@
 import axios from 'axios';
+//import { useAuth } from '../contexts/AuthContext.jsx';
 
 const api = axios.create({
-  baseURL: 'http://localhost:4000/api',  // Ajusta según tu backend
+  baseURL: 'http://localhost:4000/api',
 });
+
+// Interceptor para agregar el ID del usuario a las peticiones
+//api.interceptors.request.use((config) => {
+//  const user = JSON.parse(localStorage.getItem('user'));
+//  if (user) {
+//    config.headers['X-User-Id'] = user.id;
+//  }
+//  return config;
+//});
 
 export const login = (username, password) => 
   api.post('/login', {user: username, pwd: password} );

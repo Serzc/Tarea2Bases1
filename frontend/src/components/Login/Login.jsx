@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../../services/api';
+//import { useAuth } from '../../contexts/AuthContext.jsx';
 import './Login.css';
 
 export default function Login() {
@@ -9,6 +10,7 @@ export default function Login() {
   const [error, setError] = useState('');
   const [lockedOut, setLockedOut] = useState(false);
   const navigate = useNavigate();
+  //const { login } = useAuth();
 
   // Check if IP is locked out on mount
   useEffect(() => {
@@ -32,6 +34,7 @@ export default function Login() {
     console.log('Sending login request:', username, password);
     try {
       const response = await login(username, password);
+      console.log("RESPUESTA: ",response.data);
       setError('¡Éxito!');
       navigate('/employees');
     } catch (err) {

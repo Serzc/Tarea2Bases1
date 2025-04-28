@@ -95,7 +95,7 @@ const empleadoController = {
             .input('PostInIP', sql.VarChar(64), req.ip || '127.0.0.1')
             .output('CodigoError', sql.Int)
             .execute('sp_EliminarEmpleado');
-            
+
           if (result.output.CodigoError !== 0) {
             const errorMessages = {
               50013: 'Empleado no encontrado o ya eliminado'
